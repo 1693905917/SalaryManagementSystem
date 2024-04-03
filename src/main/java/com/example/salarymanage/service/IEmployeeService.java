@@ -1,11 +1,9 @@
 package com.example.salarymanage.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.salarymanage.config.PageResult;
-import com.example.salarymanage.domain.Employee;
-import com.example.salarymanage.domain.EmployeeDTO;
-import com.example.salarymanage.domain.EmployeePageByNameOrPidDTO;
-import com.example.salarymanage.domain.EmployeePageQueryDTO;
+import com.example.salarymanage.domain.*;
 
 import java.util.List;
 
@@ -67,4 +65,9 @@ public interface IEmployeeService extends IService<Employee> {
      **/
     PageResult pageQueryByMarketManagers(EmployeePageQueryDTO employeePageQueryDTO);
 
+    IPage<Employee> getPage(int currentPage, int pageSize, EmployeeVO employeeVo);
+
+    Boolean modify(Employee employee);
+
+    Boolean delete(Integer id);
 }

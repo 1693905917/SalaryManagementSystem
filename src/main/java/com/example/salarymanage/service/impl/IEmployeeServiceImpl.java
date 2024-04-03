@@ -1,5 +1,6 @@
 package com.example.salarymanage.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -9,6 +10,7 @@ import com.example.salarymanage.dao.EmployeeDao;
 import com.example.salarymanage.domain.*;
 import com.example.salarymanage.service.IEmployeeService;
 import com.example.salarymanage.service.IProfessionService;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -173,5 +175,37 @@ public class IEmployeeServiceImpl extends ServiceImpl<EmployeeDao, Employee> imp
         pageResult.setTotal(employeePage.getPages()); //获取总页码
         pageResult.setRecords(employeePage.getRecords()); //获取每页显示的记录数
         return pageResult;
+    }
+
+    @Override
+    public IPage<Employee> getPage(int currentPage, int pageSize, EmployeeVO employeeVo) {
+        Integer pid=0;
+        IPage page = new Page(currentPage,pageSize);
+        LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<Employee>();
+        lqw.like(Strings.isNotEmpty(employeeVo.getName()),Employee::getName,employeeVo.getName());
+        switch (employeeVo.getType()){
+            case "经理":
+                pid=1;break;
+            case "技术员":
+                pid=2;break;
+            case "销售员":
+                pid=3;break;
+            case "销售经理":
+                pid=4;break;
+            default:
+                break;
+        }
+        lqw.like(Strings.isNotEmpty(employeeVo.getType()),Employee::getPid,pid);
+        return employeeDao.selectPage(page,lqw);
+    }
+
+    @Override
+    public Boolean modify(Employee employee) {
+        return employeeDao.updateById(employee)>0;
+    }
+
+    @Override
+    public Boolean delete(Integer id) {
+        return employeeDao.deleteById(id)>0;
     }
 }

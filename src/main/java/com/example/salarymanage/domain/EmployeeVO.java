@@ -15,12 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Employee {
-    private Integer id;
-    private String name;
-    private Integer age;
-    private String sex;
-    private Integer pid;
-    private Integer salary;
+public class EmployeeVO {
     private String type;
+    private String name;
 }
