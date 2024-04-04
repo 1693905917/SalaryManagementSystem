@@ -17,7 +17,7 @@ public interface IEmployeeService extends IService<Employee> {
      * @param:
      * @return:
      **/
-    void setEmployeeSalaryList();
+//    void setEmployeeSalaryList();
 
     /*
      * @description:获取全部员工信息
@@ -70,4 +70,8 @@ public interface IEmployeeService extends IService<Employee> {
     Boolean modify(Employee employee);
 
     Boolean delete(Integer id);
+
+//    void SetMarketManagersSalary(Integer id);
+
+    void SetMarketManagersSalary(Integer id,boolean flag);
 }

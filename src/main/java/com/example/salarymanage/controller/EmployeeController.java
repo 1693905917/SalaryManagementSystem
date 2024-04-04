@@ -1,5 +1,6 @@
 package com.example.salarymanage.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.salarymanage.config.PageResult;
 import com.example.salarymanage.config.R;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @BelongsProject: SalaryManage
@@ -65,13 +68,13 @@ public class EmployeeController {
      **/
     @GetMapping("/{currentPage}/{pageSize}")
     public R getPage(@PathVariable("currentPage") int currentPage, @PathVariable("pageSize")  int pageSize, EmployeeVO employeeVo){
-        System.out.println("Employee:>>>>>>>"+employeeVo.toString());
+//        System.out.println("Employee:>>>>>>>"+employeeVo.toString());
         IPage<Employee> page = employeeService.getPage(currentPage, pageSize,employeeVo);
         //如果当前页码值大于了总页码值，那么重新执行查询操作，使用最大页码值作为当前页码值
         if( currentPage > page.getPages()){
             page = employeeService.getPage((int)page.getPages(), pageSize,employeeVo);
         }
-        System.out.println("page:>>>>>>>"+page.getRecords().toString());
+//        System.out.println("page:>>>>>>>"+page.getRecords().toString());
         return new R(true, page);
     }
     /*
@@ -121,7 +124,9 @@ public class EmployeeController {
      **/
     @DeleteMapping("{id}")
     public R delete(@PathVariable("id") Integer id){
-        return new R(employeeService.delete(id));
+        Boolean delete = employeeService.delete(id);
+        employeeService.SetMarketManagersSalary(id,false);
+        return new R(delete);
     }
 
     /*
@@ -134,6 +139,7 @@ public class EmployeeController {
     @PostMapping
     public R save(@RequestBody Employee employee) throws IOException {
         boolean flag = employeeService.save(employee);
+        employeeService.SetMarketManagersSalary(employee.getPid(),true);
         if(employee.getName().equals("123")) throw new IOException();
         return new R(flag,flag ? "添加成功^_^" : "添加失败-_-!");
     }

@@ -47,43 +47,43 @@ public class IEmployeeServiceImpl extends ServiceImpl<EmployeeDao, Employee> imp
      * @param:
      * @return:
      **/
-    @Override
-    public void setEmployeeSalaryList() {
-        List<Employee> employeeList = employeeDao.selectList(null);
-        for (Employee employee : employeeList) {
-            //技术员工资
-            if(employee.getPid()==2){
-                employee.setSalary(WorkTimes*100);
-                employeeDao.updateById(employee);
-            }
-            //销售员工资
-            if(employee.getPid()==3){
-                employee.setSalary((int)(Market*0.04));
-                employeeDao.updateById(employee);
-            }
-        }
-        //设置销售经理的工资
-        QueryWrapper<Employee> employeeQueryWrapper = new QueryWrapper<>();
-        employeeQueryWrapper.select("sum(salary) as sum_salary").eq("pid",3);
-        Map<String, Object> map = employeeDao.selectMaps(employeeQueryWrapper).get(0);
-        QueryWrapper<Employee> w1 = new QueryWrapper<>();
-        w1.eq("pid",4);
-        List<Employee> markerManager = employeeDao.selectList(w1);
-        BigDecimal sum_salary = (BigDecimal) (map.get("sum_salary"));
-        int sum=(int)(Integer.parseInt(sum_salary.toString())*0.005);
-        for (Employee employee : markerManager) {
-            employee.setSalary(sum+5000);
-            employeeDao.updateById(employee);
-        }
-        //设置经理工资
-        QueryWrapper<Employee> w2 = new QueryWrapper<>();
-        w2.eq("pid",1);
-        List<Employee> bossList = employeeDao.selectList(w2);
-        for (Employee boss : bossList) {
-            boss.setSalary(8000);
-            employeeDao.updateById(boss);
-        }
-    }
+//    @Override
+//    public void setEmployeeSalaryList() {
+//        List<Employee> employeeList = employeeDao.selectList(null);
+//        for (Employee employee : employeeList) {
+//            //技术员工资
+//            if(employee.getPid()==2){
+//                employee.setSalary(WorkTimes*100);
+//                employeeDao.updateById(employee);
+//            }
+//            //销售员工资
+//            if(employee.getPid()==3){
+//                employee.setSalary((int)(Market*0.04));
+//                employeeDao.updateById(employee);
+//            }
+//        }
+//        //设置销售经理的工资
+//        QueryWrapper<Employee> employeeQueryWrapper = new QueryWrapper<>();
+//        employeeQueryWrapper.select("sum(salary) as sum_salary").eq("pid",3);
+//        Map<String, Object> map = employeeDao.selectMaps(employeeQueryWrapper).get(0);
+//        QueryWrapper<Employee> w1 = new QueryWrapper<>();
+//        w1.eq("pid",4);
+//        List<Employee> markerManager = employeeDao.selectList(w1);
+//        BigDecimal sum_salary = (BigDecimal) (map.get("sum_salary"));
+//        int sum=(int)(Integer.parseInt(sum_salary.toString())*0.005);
+//        for (Employee employee : markerManager) {
+//            employee.setSalary(sum+5000);
+//            employeeDao.updateById(employee);
+//        }
+//        //设置经理工资
+//        QueryWrapper<Employee> w2 = new QueryWrapper<>();
+//        w2.eq("pid",1);
+//        List<Employee> bossList = employeeDao.selectList(w2);
+//        for (Employee boss : bossList) {
+//            boss.setSalary(8000);
+//            employeeDao.updateById(boss);
+//        }
+//    }
 
     /*
      * @description:获取全部员工信息
@@ -183,6 +183,7 @@ public class IEmployeeServiceImpl extends ServiceImpl<EmployeeDao, Employee> imp
         IPage page = new Page(currentPage,pageSize);
         LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<Employee>();
         lqw.like(Strings.isNotEmpty(employeeVo.getName()),Employee::getName,employeeVo.getName());
+        lqw.orderByDesc(Employee::getSalary);
         switch (employeeVo.getType()){
             case "经理":
                 pid=1;break;
@@ -201,11 +202,93 @@ public class IEmployeeServiceImpl extends ServiceImpl<EmployeeDao, Employee> imp
 
     @Override
     public Boolean modify(Employee employee) {
-        return employeeDao.updateById(employee)>0;
+        int i = employeeDao.updateById(employee);
+        this.SetMarketManagersSalary(employee.getPid(),true);
+        //销售员工资
+//        if(employee.getPid()==3){
+//            //设置销售经理的工资
+//            QueryWrapper<Employee> employeeQueryWrapper = new QueryWrapper<>();
+//            employeeQueryWrapper.select("sum(salary) as sum_salary").eq("pid",3);
+//            Map<String, Object> map = employeeDao.selectMaps(employeeQueryWrapper).get(0);
+//            QueryWrapper<Employee> w1 = new QueryWrapper<>();
+//            w1.eq("pid",4);
+//            List<Employee> markerManager = employeeDao.selectList(w1);
+//            BigDecimal sum_salary = (BigDecimal) (map.get("sum_salary"));
+//            System.out.println(sum_salary+">>>>>>>>>");
+//            int sum=(int)(Integer.parseInt(sum_salary.toString())*0.005);
+//            System.out.println(sum+">>>>>>>>>");
+//            for (Employee employees : markerManager) {
+//                employees.setSalary(sum+5000);
+//                employeeDao.updateById(employees);
+//            }
+//        }
+        return i>0;
     }
 
     @Override
     public Boolean delete(Integer id) {
         return employeeDao.deleteById(id)>0;
     }
+//    @Override
+//    public void  SetMarketManagersSalary(Integer id)
+//    {
+//        //销售员工资
+//        if(id==3){
+//            //设置销售经理的工资
+//            QueryWrapper<Employee> employeeQueryWrapper = new QueryWrapper<>();
+//            employeeQueryWrapper.select("sum(salary) as sum_salary").eq("pid",3);
+//            Map<String, Object> map = employeeDao.selectMaps(employeeQueryWrapper).get(0);
+//            QueryWrapper<Employee> w1 = new QueryWrapper<>();
+//            w1.eq("pid",4);
+//            List<Employee> markerManager = employeeDao.selectList(w1);
+//            BigDecimal sum_salary = (BigDecimal) (map.get("sum_salary"));
+//            int sum=(int)(Integer.parseInt(sum_salary.toString())*0.005);
+//            for (Employee employees : markerManager) {
+//                employees.setSalary(sum+5000);
+//                employeeDao.updateById(employees);
+//            }
+//        }
+//    }
+
+    @Override
+    public void SetMarketManagersSalary(Integer id, boolean flag) {
+        if(flag){
+            //销售员工资
+            if(id==3){
+                SetMarketManagersSalaryMethod();
+            }
+        }else{
+            //设置销售经理的工资
+            SetMarketManagersSalaryMethod();
+//            QueryWrapper<Employee> employeeQueryWrapper = new QueryWrapper<>();
+//            employeeQueryWrapper.select("sum(salary) as sum_salary").eq("pid",3);
+//            Map<String, Object> map = employeeDao.selectMaps(employeeQueryWrapper).get(0);
+//            QueryWrapper<Employee> w1 = new QueryWrapper<>();
+//            w1.eq("pid",4);
+//            List<Employee> markerManager = employeeDao.selectList(w1);
+//            BigDecimal sum_salary = (BigDecimal) (map.get("sum_salary"));
+//            int sum=(int)(Integer.parseInt(sum_salary.toString())*0.005);
+//            for (Employee employees : markerManager) {
+//                employees.setSalary(sum+5000);
+//                employeeDao.updateById(employees);
+//            }
+        }
+    }
+
+    public void SetMarketManagersSalaryMethod(){
+        //设置销售经理的工资
+        QueryWrapper<Employee> employeeQueryWrapper = new QueryWrapper<>();
+        employeeQueryWrapper.select("sum(salary) as sum_salary").eq("pid",3);
+        Map<String, Object> map = employeeDao.selectMaps(employeeQueryWrapper).get(0);
+        QueryWrapper<Employee> w1 = new QueryWrapper<>();
+        w1.eq("pid",4);
+        List<Employee> markerManager = employeeDao.selectList(w1);
+        BigDecimal sum_salary = (BigDecimal) (map.get("sum_salary"));
+        int sum=(int)(Integer.parseInt(sum_salary.toString())*0.005);
+        for (Employee employees : markerManager) {
+            employees.setSalary(sum+5000);
+            employeeDao.updateById(employees);
+        }
+    }
+
 }
