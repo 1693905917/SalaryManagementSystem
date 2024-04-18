@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小型公司工资管理系统</title>
+    <link rel="stylesheet" href="../css/loginStyle.css">
+    <script type="text/javascript" src="../js/jquery-3.6.0.js"></script>
+</head>
+<body>
+    <div class="box">
+        <h2>Login</h2>
+<!--        onsubmit="return false" action="##"-->
+        <form id="form1"  onsubmit="return false" action="##">
+        <div class="input-box">
+            <label>账号</label>
+            <input type="text" name="username" id="username"/>
+        </div>
+        <div class="input-box">
+            <label>密码</label>
+            <input type="password" name="password" id="password"/>
+        </div>
+        <div class="btn-box">
+            <!-- <a href="#">忘记密码?</a> -->
+            <div>
+                <button onclick="login()">登录</button>
+                <!-- <button>注册</button> -->
+            </div>
+        </div>
+        </form>
+    </div>
+
+<script type="text/javascript">
+    function login(){
+        var username= document.getElementById("username").value;
+        // var password = $("password").val();
+        var password =document.getElementById("password").value;
+
+        $.ajax({
+            url:"http://localhost/user/login",
+            data:{
+                    "username": username,
+                    "password": password,
+            },
+            // dataType:"json",
+            text:"json",
+            responseType:"json",
+            async: true,
+            success:function (data){
+                alert('登录成功')
+                console.log(data)
+                $(location).attr('href', 'books.html');
+            },
+            error:function (data){
+                console.log(data)
+                alert('账号或者密码有问题')
+            }
+        })
+
+    }
+</script>
+</body>
+</html>

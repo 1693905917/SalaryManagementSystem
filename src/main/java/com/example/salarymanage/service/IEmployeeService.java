@@ -8,8 +8,6 @@ import com.example.salarymanage.domain.*;
 import java.util.List;
 
 public interface IEmployeeService extends IService<Employee> {
-
-
     /*
      * @description:设置全部员工的工资信息
      * @author:  HZP

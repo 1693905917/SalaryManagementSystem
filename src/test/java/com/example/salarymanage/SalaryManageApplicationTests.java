@@ -9,8 +9,10 @@ import com.example.salarymanage.dao.ProfessionDao;
 import com.example.salarymanage.domain.Employee;
 import com.example.salarymanage.domain.EmployeeDTO;
 import com.example.salarymanage.domain.Profession;
+import com.example.salarymanage.domain.User;
 import com.example.salarymanage.service.IEmployeeService;
 import com.example.salarymanage.service.IProfessionService;
+import com.example.salarymanage.service.IUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,10 @@ import java.util.Map;
 
 @SpringBootTest
 class SalaryManageApplicationTests {
-
+    //设置工作时间
+    static final Integer WorkTimes=100;
+    //设置销售额
+    static final Integer Market=10000;
     @Autowired
     private ProfessionDao professionDao;
     @Autowired
@@ -31,12 +36,27 @@ class SalaryManageApplicationTests {
     private IEmployeeService employeeService;
     @Autowired
     private IProfessionService professionService;
+    @Autowired
+    private IUserService userService;
 
+    @Test
+    void testUser(){
+        List<User> list = userService.list();
+        System.out.println(list.toString());
+    }
+
+    @Test //分页功能
+    void testGetPage(){
+        IPage page=new Page(2,5);
+        employeeDao.selectPage(page, null);
+
+    }
 
     @Test
     void delete(){
         employeeService.removeById(6);
     }
+
     @Test
     //分页功能
     void Page(){
@@ -62,12 +82,6 @@ class SalaryManageApplicationTests {
         System.out.println(employeeList);
         List<Profession> professionList = professionService.list(new QueryWrapper<Profession>().orderByDesc("salary"));
         System.out.println(professionList);
-    }
-
-
-    @Test
-    void contextLoads() {
-
     }
 
     @Test
@@ -118,12 +132,7 @@ class SalaryManageApplicationTests {
         System.out.println(i);
     }
 
-    @Test //分页功能
-    void testGetPage(){
-        IPage page=new Page(2,5);
-        employeeDao.selectPage(page, null);
 
-    }
 
     //过滤查询
     @Test
@@ -150,13 +159,10 @@ class SalaryManageApplicationTests {
         IPage page1 = employeeDao.selectPage(page, employeeQueryWrapper);
         System.out.println(page1.getRecords().toString());
     }
-    //设置工作时间
-    static final Integer WorkTimes=100;
-    //设置销售额
-    static final Integer Market=10000;
+
 
     @Test
-     void setEmployeeSalaryList() {
+    void setEmployeeSalaryList() {
         List<Employee> employeeList = employeeDao.selectList(null);
         for (Employee employee : employeeList) {
             //技术员工资
@@ -192,5 +198,13 @@ class SalaryManageApplicationTests {
             employeeDao.updateById(boss);
         }
     }
+
+
+    @Test
+    void contextLoads() {
+
+    }
+
+
 
 }

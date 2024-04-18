@@ -6,6 +6,14 @@ spring:
     url: jdbc:mysql://localhost:3306/salarymanage
     username: root
     password: 1234
+  thymeleaf:
+    prefix: classpath:/static/
+    suffix: .html
+
+  mvc:
+    static-path-pattern: /**
+  resources:
+    static-locations: classpath:/static/
 
 mybatis-plus:
   global-config:

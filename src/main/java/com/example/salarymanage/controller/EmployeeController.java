@@ -9,6 +9,7 @@ import com.example.salarymanage.domain.*;
 import com.example.salarymanage.service.IEmployeeService;
 import com.example.salarymanage.service.IProfessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -55,7 +56,6 @@ public class EmployeeController {
         PageResult pageResult=employeeService.pageQuery(employeePageQueryDTO);
         return Result.success(pageResult);
     }
-
 
 
 
