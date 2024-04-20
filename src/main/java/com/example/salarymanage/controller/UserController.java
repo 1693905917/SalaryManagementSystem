@@ -21,23 +21,24 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-
+    /*
+     * @description:用户登录
+     * @author:  HZP
+     * @date: 2024/4/19 23:36
+     * @param:
+     * @return:
+     **/
     @RequestMapping(value = "/login",method = RequestMethod.GET)
     @ResponseBody
     public String login(@RequestParam("username") String username,@RequestParam("password") String password){
-//        System.out.println(username+"============"+password);
         List<User> list = userService.list();
-//        System.out.println(list);
+        System.out.println(username+password);
         for (User user : list) {
             if(user.getUsername().equals(username)&&user.getPassword().equals(password)){
-                return "{data:'success'}";
+                return "success";
             }
         }
-        return "{data:'error'}";
+        return "error";
 
     }
-
-
-
-
 }
