@@ -57,8 +57,6 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
-
-
     /*
      * @description:员工分页查询优化版
      * @author:  HZP
@@ -68,13 +66,11 @@ public class EmployeeController {
      **/
     @GetMapping("/{currentPage}/{pageSize}")
     public R getPage(@PathVariable("currentPage") int currentPage, @PathVariable("pageSize")  int pageSize, EmployeeVO employeeVo){
-//        System.out.println("Employee:>>>>>>>"+employeeVo.toString());
         IPage<Employee> page = employeeService.getPage(currentPage, pageSize,employeeVo);
         //如果当前页码值大于了总页码值，那么重新执行查询操作，使用最大页码值作为当前页码值
         if( currentPage > page.getPages()){
             page = employeeService.getPage((int)page.getPages(), pageSize,employeeVo);
         }
-//        System.out.println("page:>>>>>>>"+page.getRecords().toString());
         return new R(true, page);
     }
     /*
@@ -98,6 +94,22 @@ public class EmployeeController {
      **/
     @PutMapping
     public R update(@RequestBody Employee employee){
+        if(employee.getPid()==3){
+            //获取的是销售额度
+            Integer SalesNum = employee.getSalary();
+            System.out.println("获取的是销售额度:>>>>>>"+SalesNum);
+            Integer salary=SalesNum+Double.valueOf(SalesNum*0.04).intValue();
+            //这才是销售员真正的工资
+            System.out.println("销售员真正的工资:>>>>>>"+salary);
+            employee.setSalary(salary);
+        }else if(employee.getPid()==2){
+            //获取工作时间
+            Integer workTimes = employee.getSalary();
+            System.out.println("获取的是工作时间:>>>>>>"+workTimes);
+            Integer salary=workTimes*100;
+            System.out.println("技术员真正的工资:>>>>>>"+salary);
+            employee.setSalary(salary);
+        }
         return new R(employeeService.modify(employee));
     }
 
